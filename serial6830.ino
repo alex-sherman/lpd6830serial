@@ -75,12 +75,12 @@ void LerpRange() {
   steps = readSync();
   t_delay = readSync();
   Color past[i_end - i_start + 1];
-  memcpy(past, leds + i_start, sizeof(past));
+  memcpy(past, &leds[i_start], sizeof(past));
   for(int i = 0; i < steps - 1; i++) {
-    for(int j = i_start; j <= i_end; j++) {
-      leds[j].r = (color.r - past[j].r) * i / steps + past[j].r;
-      leds[j].g = (color.g - past[j].g) * i / steps + past[j].g;
-      leds[j].b = (color.b - past[j].b) * i / steps + past[j].b;
+    for(int j = 0; j <= i_end - i_start; j++) {
+      leds[j + i_start].r = (color.r - past[j].r) * i / steps + past[j].r;
+      leds[j + i_start].g = (color.g - past[j].g) * i / steps + past[j].g;
+      leds[j + i_start].b = (color.b - past[j].b) * i / steps + past[j].b;
     }
     FastSPI_LED.show();
     delay(t_delay);

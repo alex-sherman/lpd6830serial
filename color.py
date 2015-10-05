@@ -67,6 +67,11 @@ try:
     leds.start()
     time.sleep(0.5)
     leds.SetRange(Color(100,100,100), 0, 23)
+    while(True):
+        leds.SetRange(Color(100,100,100), 0, 23)
+        leds.LerpRange(Color(0, 0, 0), 10, 23, 100, 4)
+        leds.LerpRange(Color(100,100,100), 10, 23, 100, 4)
+
     c = Color(0, 0, 0)
     colors = [Color(i * 5, i * 5, i * 5) for i in range(24)]
     leds.SetValues(colors)
