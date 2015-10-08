@@ -24,12 +24,10 @@ class Animation(Thread):
         self.running = False
     def run(self):
         while(self.running):
-            print "faff"
             now = time.time()
             diff = now - self._lastCall
             self._lastCall = now
             self.update(diff)
-        print "Animation exiting"
         time.sleep(0.1)
 
     def init(self):
@@ -43,8 +41,8 @@ class GreenGlow(Animation):
         self.values = [0] * self.strip.numLEDs
 
     def update(self, dt):
-        self.values = [max(random.randrange(0, 285) - 100, 0) if random.random() < 0.2 else 0 for i in range(self.strip.numLEDs)]
-        self.strip.LerpValues([{"r": 0, "g": value, "b": 0} for value in self.values], 100, 1)
+        self.values = [random.randrange(0, 255) if random.random() < 0.1 else 0 for i in range(self.strip.numLEDs)]
+        self.strip.LerpValues([{"r": 0, "g": value, "b": 0} for value in self.values], 100, 3)
 
 class FireAnimation(Animation):
     def init(self):
