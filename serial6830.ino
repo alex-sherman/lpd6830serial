@@ -12,6 +12,7 @@ struct Color *leds;
 #define SETRANGE 0x1
 #define LERPRANGE 0x2
 #define SETVALUES 0x3
+#define LERPVALUES 0x4
 
 void setup()
 {
@@ -59,6 +60,32 @@ void SetRange() {
     leds[i].r = color.r;
     leds[i].g = color.g;
     leds[i].b = color.b;
+  }
+  FastSPI_LED.show();
+}
+
+void LerpValues() {
+  Color colors[NUM_LEDS];
+  uint8_t steps;
+  uint8_t t_delay;
+  readInto((char *)colors, NUM_LEDS * 3);
+  steps = readSync();
+  t_delay = readSync();
+  Color past[NUM_LEDS];
+  memcpy(past, leds, sizeof(past));
+  for(int i = 0; i < steps - 1; i++) {
+    for(int j = 0; j < NUM_LEDS; j++) {
+      leds[j].r = (colors[j].r - past[j].r) * i / steps + past[j].r;
+      leds[j].g = (colors[j].g - past[j].g) * i / steps + past[j].g;
+      leds[j].b = (colors[j].b - past[j].b) * i / steps + past[j].b;
+    }
+    FastSPI_LED.show();
+    delay(t_delay);
+  }
+  for(int i = 0; i < NUM_LEDS; i++) {
+    leds[i].r = colors[i].r;
+    leds[i].g = colors[i].g;
+    leds[i].b = colors[i].b;
   }
   FastSPI_LED.show();
 }
@@ -115,6 +142,10 @@ void loop() {
       case(LERPRANGE):
         LerpRange();
         Serial.write(LERPRANGE);
+        break;
+      case(LERPVALUES):
+        LerpValues();
+        Serial.write(LERPVALUES);
         break;
       default:
         //Serial.write(255);
