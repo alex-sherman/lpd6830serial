@@ -1,18 +1,13 @@
 import serial, time
 import jrpc
+from jrpc.reflection import NUMBER
 from threading import Thread
 import random
-import interface
-from interface import NUMBER
 
-class Color:
-    r = interface.NUMBER(0, 255)
-    g = interface.NUMBER(0, 255)
-    b = interface.NUMBER(0, 255)
-    def __init__(self, r = 0, g = 0, b = 0):
-        self.r = 0
-        self.g = 0
-        self.b = 0
+class COLOR(jrpc.reflection.RPCType):
+    r = NUMBER(0, 255)
+    g = NUMBER(0, 255)
+    b = NUMBER(0, 255)
 
 def colortoBytes(color):
     return [
@@ -104,8 +99,7 @@ class LedStrip(jrpc.service.SocketObject):
         self.ser.write(msg)
         return int(ord(self.ser.read()))
 
-    @interface.method(Color, NUMBER, NUMBER)
-    @jrpc.service.method
+    @jrpc.service.method(COLOR(), NUMBER(), NUMBER())
     def SetRange(self, color, start, end):
         msg = [chr(LedStrip.MSG_SETRANGE)]
         msg += colortoBytes(color)
@@ -148,7 +142,6 @@ class LedStrip(jrpc.service.SocketObject):
         self.ser.close()
         self.StopAnimation()
 
-print LedStrip.SetRange.params
 ser = serial.Serial(
     port='COM4',
     baudrate=115200,
